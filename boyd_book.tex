@@ -1,0 +1,141 @@
+\RequirePackage{luatex85}
+\documentclass[openany]{book}
+
+
+%\usepackage[T1]{fontenc}
+%\usepackage[utf8]{inputenc}
+%\usepackage{blindtext}
+
+\usepackage{epigraph}
+\usepackage{titlesec}
+
+%%%%%%%%%% For some blank pages:
+\usepackage{afterpage}
+
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
+
+
+
+%%%%%%%%%% Deal with pesky quotation marks
+\usepackage{luacode} % or 'luacode' environment
+%% Lua-side code:
+\begin{luacode}
+function convert_dumb_quotes_to_smart_quotes ( s )
+   return ( s:gsub ( '"(..-)"' , "``%1''" ) )
+end
+\end{luacode}
+%% TeX-side code:
+\newcommand\QuoteConvOn{\directlua{ 
+  luatexbase.add_to_callback ( "process_input_buffer" , 
+  convert_dumb_quotes_to_smart_quotes , "dumb_to_smart" )}}
+\newcommand\QuoteConvOff{\directlua{ 
+  luatexbase.remove_from_callback ( "process_input_buffer" , 
+  "dumb_to_smart" )}}
+\AtBeginDocument{\QuoteConvOn} % switch function on by default
+
+
+%%%%%%%%%%% Don't number chapters in the TOC
+
+\usepackage{tocloft}
+\setcounter{secnumdepth}{4}% Show down to subsubsection
+
+\setlength{\cftchapindent}{-20pt}% Just some value...
+
+\usepackage{xpatch}
+
+\makeatletter
+\xpatchcmd{\@chapter}{\addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#1}}{%
+                      \addcontentsline{toc}{chapter}{\protect\numberline{}#1}}{\typeout{Success}}{\typeout{Failed!}}
+\makeatother
+
+
+
+%%%%%%%%%%%   To get rid of the annoying ``Chapter 1'' at the top of each chapter.
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries}{}{10pt}{\Large}
+
+
+%%%%%%%%%%%   page size
+\usepackage[paperheight=9in,paperwidth=6in,margin=1in,heightrounded]{geometry}
+
+
+%%%%%%%%%%  Table of contents font sizing
+
+\renewcommand\cftpartfont{\Large\bfseries}
+\renewcommand\cftchapfont{\small}
+
+
+%%%%%%%%%%%%% For Epigraphs
+
+% \epigraphsize{\small}% Default
+\setlength\epigraphwidth{8cm}
+\setlength\epigraphrule{0pt}
+
+
+
+\title{\Huge{Not Running:} \\ \Large{What To Do When It's The Only Thing Worse Than Running}}
+\author{A collection of essays by Steve Boyd}
+\date{}
+
+\begin{document}
+\afterpage{\blankpage}
+
+\maketitle
+
+\tableofcontents
+
+\afterpage{\blankpage}
+
+\part{Introduction}
+\include{chapters/welcome}
+
+\part{Philosophy}
+\include{chapters/notRunning}
+\include{chapters/waging}
+\include{chapters/tough}
+\include{chapters/marathon}
+\include{chapters/beer}
+\include{chapters/mortality}
+\include{chapters/birthDeath}
+\include{chapters/pictures}
+\include{chapters/talentDrive}
+
+\part{Science}
+\include{chapters/daniels1}
+\include{chapters/movementOptimism}
+\include{chapters/hardSnell}
+\include{chapters/daniels2}
+\include{chapters/unblinding}
+\include{chapters/daniels3}
+\include{chapters/barefoot}
+\include{chapters/daniels4}
+
+\part{Coaching and Mentoring}
+\include{chapters/noGreat}
+\include{chapters/pullPlug}
+\include{chapters/teachingRunning}
+\include{chapters/devilDetails}
+\include{chapters/circles}
+\include{chapters/young}
+\include{chapters/raisingRunners}
+
+\part{Training}
+\include{chapters/consistency}
+\include{chapters/fartlek}
+\include{chapters/optimalPerformance}
+\include{chapters/crossTraining}
+\include{chapters/bridging}
+\include{chapters/groupy}
+
+\part{Racing}
+\include{chapters/riskingFailure}
+\include{chapters/crossCountry}
+\include{chapters/seriousRunners}
+\include{chapters/livingRelic}
+\include{chapters/allowingOurselves}
+
+\end{document}
